@@ -117,6 +117,31 @@ CON_COMMAND_CHAT(nomlist, "- List the list of nominations")
 		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "- %s (%d time%s)\n", g_pMapVoteSystem->GetMapName(pair.first), pair.second, pair.second > 1 ? "s" : "");
 }
 
+CON_COMMAND_CHAT(noms, "- List the list of nominations")
+{
+	if (!g_cvarVoteManagerEnable.Get())
+		return;
+
+	if (g_pMapVoteSystem->GetForcedNextMap())
+	{
+		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "Nominations are disabled because the next map has been forced to \x06%s\x01.", g_pMapVoteSystem->GetForcedNextMap()->GetName());
+		return;
+	}
+
+	std::unordered_map<int, int> mapNominatedMaps = g_pMapVoteSystem->GetNominatedMaps();
+
+	if (mapNominatedMaps.size() == 0)
+	{
+		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "No maps have been nominated yet!");
+		return;
+	}
+
+	ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "Current nominations:");
+
+	for (auto pair : mapNominatedMaps)
+		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "- %s (%d time%s)\n", g_pMapVoteSystem->GetMapName(pair.first), pair.second, pair.second > 1 ? "s" : "");
+}
+
 CON_COMMAND_CHAT(mapcooldowns, "- List the maps currently in cooldown")
 {
 	if (!g_cvarVoteManagerEnable.Get())
