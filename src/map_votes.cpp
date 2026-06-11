@@ -92,32 +92,15 @@ CON_COMMAND_CHAT(nominate, "[mapname] - Nominate a map (empty to clear nominatio
 	g_pMapVoteSystem->AttemptNomination(player, args.ArgC() < 2 ? "" : args[1]);
 }
 
-CON_COMMAND_CHAT(nomlist, "- List the list of nominations")
+CON_COMMAND_CHAT(nom, "[mapname] - Nominate a map (empty to clear nomination or list all maps)")
 {
-	if (!g_cvarVoteManagerEnable.Get())
+	if (!g_cvarVoteManagerEnable.Get() || !player)
 		return;
 
-	if (g_pMapVoteSystem->GetForcedNextMap())
-	{
-		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "Nominations are disabled because the next map has been forced to \x06%s\x01.", g_pMapVoteSystem->GetForcedNextMap()->GetName());
-		return;
-	}
-
-	std::unordered_map<int, int> mapNominatedMaps = g_pMapVoteSystem->GetNominatedMaps();
-
-	if (mapNominatedMaps.size() == 0)
-	{
-		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "No maps have been nominated yet!");
-		return;
-	}
-
-	ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "Current nominations:");
-
-	for (auto pair : mapNominatedMaps)
-		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "- %s (%d time%s)\n", g_pMapVoteSystem->GetMapName(pair.first), pair.second, pair.second > 1 ? "s" : "");
+	g_pMapVoteSystem->AttemptNomination(player, args.ArgC() < 2 ? "" : args[1]);
 }
 
-CON_COMMAND_CHAT(noms, "- List the list of nominations")
+CON_COMMAND_CHAT(nomlist, "- List the list of nominations")
 {
 	if (!g_cvarVoteManagerEnable.Get())
 		return;
